@@ -1,0 +1,27 @@
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class TargetPublisher(Node):
+    def __init__(self):
+        super().__init__('target_publisher')
+        self.publisher_ = self.create_publisher(String, '/target_position', 10)
+        self.timer = self.create_timer(1.0, self.timer_callback)
+        self.count = 0
+
+    def timer_callback(self):
+        msg = String()
+        msg.data = f'目标坐标测试: u=320, v=240, 帧数={self.count}'
+        self.publisher_.publish(msg)
+        self.get_logger().info(f'发送消息: "{msg.data}"')
+        self.count += 1
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = TargetPublisher()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
